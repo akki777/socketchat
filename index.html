@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Socket.io Chat</title>
+	<style>
+	  #message { font-size: 25px;width: 90%;}
+	  #send { background: #0099cc;
+        	  color: #ffffff;
+        	  display:inline-block;
+        	  font-size: 25px;}
+	</style>
+</head>
+<body>
+<h1><center><u>ChatRoom</u></center></h1>
+<form action="/" method="post" id="chat_form">
+  <input type="text" name="message" id="message" placeholder="Your message... " autofocus autocomplete="off">
+  <input type="submit" id="send" value="Send">
+</form>
+<br><br>
+<section id="showMsg">
+</section>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+<script>
+ var username,msg;
+ username = prompt('What\'s your nickname ?');
+            document.title = username + ' - ' + document.title;
+            
+  var socket = io();
+  socket.emit('add_user', username);
+  
+  // When a message is received it's inserted in the page
+  socket.on('add_user', function(username) {
+      $('#showMsg').prepend('<center><p>' +  username + ' has joined conversation' + '</p></center>');
+  });
+
+  
+  
+  // When a message is received it's inserted in the page
+  socket.on('chat_msg', function(data) {
+      insertMessage(data.username, data.msg);
+  });
+
+
+  $('#chat_form').submit(function () {
+  msg = $('#message').val();
+  socket.emit('chat_msg',msg);
+  insertMessage(username,msg);
+  $('#message').val('').focus();
+  return false; //important
+  });
+  
+  // Adds a message to the page
+   function insertMessage(username, msg) {
+      $('#showMsg').prepend('<p><strong>' + username + '</strong>  :  ' + msg + '</p>');
+   }
+
+   socket.on('user_left', function(data) {
+      $('#showMsg').prepend('<center><p>' +  data.username + ' has left conversation' + '</p></center>');
+  });
+
+</script>
+</body>
+</html>
