@@ -6,8 +6,8 @@ app.get('/', function(req,res){
   res.sendFile(__dirname + '/index.html');
 });
 
-http.listen(8080,function(){
-console.log('listening at port : 8080');
+http.listen(8001,function(){
+console.log('listening at port : 8001');
 });
 
 io.sockets.on('connection', function (socket, username) {
